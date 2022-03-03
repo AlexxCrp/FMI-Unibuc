@@ -1,0 +1,28 @@
+Sortare nativa c++
+Vectorul este bine sortat
+Durata:0.159644 secunde
+
+BubleSort:
+Vectorul este bine sortat
+Durata:22.5545 secunde
+
+CountSort:
+Vectorul este bine sortat
+Durata:0.0016233 secunde
+
+Radix Sort LSD Baza 2:
+Vectorul este bine sortat
+Durata:2.20267 secunde
+
+Radix Sort LSD Baza 8:
+Vectorul este bine sortat
+Durata:0.789766 secunde
+
+MergeSort:
+Vectorul este bine sortat
+Durata:0.0148084 secunde
+
+QuickSort:
+Vectorul este bine sortat
+Durata:0.063177 secunde
+
