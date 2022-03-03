@@ -1,0 +1,25 @@
+{
+    "tip1": [
+        {
+            "numarPersoane": "1",
+            "dataRezervata": "2021-05-12",
+            "tip": "sezon",
+            "cod": 1,
+            "id": 1
+        },
+        {
+            "numarPersoane": "3",
+            "dataRezervata": "2021-05-09",
+            "tip": "sezon",
+            "cod": 1,
+            "id": "8e60f11d-f2b1-44b1-a894-d0f5c00e858f"
+        },
+        {
+            "numarPersoane": "1",
+            "dataRezervata": "2021-05-01",
+            "tip": "extra-sezon",
+            "cod": 2,
+            "id": "7c018dea-975d-470a-bc0d-d94212c53a28"
+        }
+    ]
+}
