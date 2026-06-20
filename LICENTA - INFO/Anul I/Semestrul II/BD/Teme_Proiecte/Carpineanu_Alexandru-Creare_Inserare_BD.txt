@@ -1,0 +1,399 @@
+--CARPINEANU ALEXANDRU GR. 131
+--Am inserat toate datele manual, si apoi am inlocuit la unele inserturi cu secventa de la ex 13
+drop table pacient cascade constraints;
+drop table afectiune cascade constraints;
+drop table afectiune_pacient cascade constraints;
+drop table istoric cascade constraints;
+drop table programare cascade constraints;
+drop table angajat cascade constraints;
+drop table doctor cascade constraints;
+drop table asistent cascade constraints;
+drop table infirmier cascade constraints;
+drop table tratament cascade constraints;
+drop table consultatie cascade constraints;
+drop table cladire cascade constraints;
+drop table cabinet cascade constraints;
+drop table casa_asig cascade constraints;
+drop table decontare cascade constraints;
+
+commit;
+
+create table PACIENT(
+Cod_Pacient number(4),
+Cod_Casa_Asig number(4),
+Nume varchar(20),
+Prenume varchar(20),
+Data_Nastere date,
+constraint pacient_Cod_Pacient_PK primary key (Cod_Pacient)
+);
+
+create table AFECTIUNE(
+Cod_Afectiune number(4),
+Denumire varchar(50),
+Descriere varchar(50),
+constraint afectiune_Cod_Afectiune_PK primary key (Cod_Afectiune)
+);
+
+create table AFECTIUNE_PACIENT(
+Cod_Afectiune number(4) ,
+Cod_Pacient number(4) ,
+Severitate varchar(50),
+constraint afectiune_pacient_PK primary key(Cod_Afectiune, Cod_Pacient)
+);
+
+create table ISTORIC(
+Cod_Istoric number(4),
+Cod_Pacient number(4),
+Data date,
+Rezultat varchar(20),
+constraint istoric_Cod_Istoric_pk primary key (Cod_Istoric, Cod_Pacient),
+constraint istoric_Cod_Pacient_fk foreign key (Cod_Pacient) references pacient(Cod_Pacient)
+);
+
+create table PROGRAMARE(
+Cod_Prog number(4),
+Cod_Pacient number(4),
+Data_Prog date,
+constraint programare_cod_prog_pk primary key(Cod_Prog, Cod_Pacient),
+constraint programare_Cod_Pacient_fk foreign key (Cod_Pacient) references pacient(Cod_Pacient)
+);
+
+create table ANGAJAT(
+Cod_Angajat number(4),
+Nume varchar(20),
+Prenume varchar(20),
+Salariu Number(6),
+constraint angajat_cod_angajat_pk primary key(Cod_Angajat)
+);
+
+create table DOCTOR(
+Cod_Doctor number(4),
+Cod_Angajat number(4),
+Data_Term_Studii date,
+Specializare Varchar(30),
+constraint doctor_cod_doctor_pk primary key(Cod_Doctor),
+constraint doctor_cod_angajat_fk foreign key (Cod_Angajat) references Angajat(Cod_Angajat)
+);
+
+create table ASISTENT(
+Cod_Asistent number(4),
+Cod_Doctor number(4),
+Cod_Angajat number(4),
+Data_Term_Studii date,
+constraint asistent_cod_asistent_pk primary key(Cod_Asistent),
+constraint asistent_cod_doctor_fk foreign key (Cod_Doctor) references Doctor(Cod_Doctor),
+constraint asistent_cod_angajat_fk foreign key (Cod_Angajat) references Angajat(Cod_Angajat)
+);
+
+create table INFIRMIER(
+Cod_In number(4),
+Cod_Asistent number(4),
+Cod_Angajat number(4),
+Tip_Studii varchar(20),
+constraint infirmier_cod_in_pk primary key(Cod_In),
+constraint infirmier_cod_asistent_fk foreign key (Cod_Asistent) references Asistent(Cod_Asistent),
+constraint infirmier_cod_angajat_fk foreign key (Cod_Angajat) references Angajat(Cod_Angajat)
+);
+
+create table CASA_ASIG(
+Cod_Casa_Asig number(4),
+Data_Alocare_Buget date,
+constraint casa_asig_codca_pk primary key(Cod_Casa_Asig)
+);
+
+create table DECONTARE(
+Cod_Decontare number(4),
+Cod_Casa_Asig number(4),
+Da_Nu varchar(5),
+constraint decontare_cod_decontare_pk primary key(Cod_Decontare),
+constraint decontare_Cod_Casa_Asig_fk foreign key (Cod_Casa_Asig) references Casa_Asig(Cod_Casa_Asig)
+);
+
+create table TRATAMENT(
+Cod_Tratament number(4),
+Cod_Afectiune  number(4),
+Cod_Doctor number(4),
+Cod_Asistent number(4),
+Cod_Pacient number(4),
+Cod_Decontare number(4),
+Durata_Tr number(3),
+constraint tratament_pk primary key(Cod_Tratament, Cod_Afectiune),
+constraint tratament_cod_doctor_fk foreign key (Cod_Doctor) references Doctor(Cod_Doctor),
+constraint tratament_cod_asistent_fk foreign key (Cod_Asistent) references Asistent(Cod_Asistent),
+constraint tratament_Cod_Pacient_fk foreign key (Cod_Pacient) references pacient(Cod_Pacient),
+constraint tratament_cod_decontare_fk foreign key(Cod_Decontare) references decontare(Cod_Decontare)
+);
+
+create table CONSULTATIE(
+Cod_Doctor number(4),
+Cod_Prog number(4),
+Cod_Pacient number(4),
+Diagnostic varchar(50),
+constraint consultatie_pk primary key(Cod_Doctor, Cod_Prog, Cod_Pacient)
+);
+
+create table CLADIRE(
+Cod_Cladire number(4),
+Nr_Incaperi number(3),
+Nr_Etaje number(2),
+constraint cladire_cod_cladire_pk primary key(Cod_Cladire)
+);
+
+create table CABINET(
+Cod_Cabinet number(4),
+Cod_Cladire number(4),
+Cod_Doctor number(4),
+Descriere_Cabinet varchar(30),
+Marime_Cabinet number(3),
+constraint cabinet_cod_cabinet_pk primary key(Cod_Cabinet, Cod_Cladire),
+constraint cabinet_cod_cladire_fk foreign key(Cod_Cladire) references cladire(Cod_cladire)
+);
+
+drop sequence id;
+create sequence id
+start with 1
+increment by 1
+minvalue 0
+maxvalue 1000
+nocycle;
+
+insert into pacient values
+(id.nextval, 1, 'Carpineanu', 'Alexandru', to_date('19/11/2001', 'DD/MM/YYYY'));
+insert into pacient values
+(id.nextval, 1, 'Gherghe', 'Tudor', to_date('10/06/2001', 'DD/MM/YYYY'));
+insert into pacient values
+(id.nextval, 2, 'Spulber', 'Bogdan', to_date('21/08/2001', 'DD/MM/YYYY'));
+insert into pacient values
+(id.nextval, 3, 'Ivan', 'Ioana', to_date('02/07/2001', 'DD/MM/YYYY'));
+insert into pacient values
+(id.nextval, 5, 'Bunghez', 'Mihai', to_date('17/09/2001', 'DD/MM/YYYY'));
+
+drop sequence id;
+create sequence id
+start with 1
+increment by 1
+minvalue 0
+maxvalue 1000
+nocycle;
+
+insert into afectiune values
+(id.nextval, 'Picior rupt', 'Un os al piciorului fracturat');
+insert into afectiune values
+(id.nextval, 'Sindrom de glob ocular iritat', 'Cauzeaza uscarea ochiului');
+insert into afectiune values
+(id.nextval, 'COVID-19', 'Forma cu lipsa mirosului');
+insert into afectiune values
+(id.nextval, 'Apendicita', 'Cauzeaza dureri mari in zona abdominala');
+insert into afectiune values
+(id.nextval, 'Gripa', 'Forma usoara');
+
+insert into afectiune_pacient values
+(1,1,'Severitate ridicata');
+insert into afectiune_pacient values
+(2,4,'Severitate medie');
+insert into afectiune_pacient values
+(4,5,'Severitate ridicata');
+insert into afectiune_pacient values
+(1,3,'Severitate medie');
+insert into afectiune_pacient values
+(5,1,'Severitate scazuta');
+insert into afectiune_pacient values
+(3,3,'Severitate medie');
+insert into afectiune_pacient values
+(1,2,'Severitate ridicata');
+insert into afectiune_pacient values
+(3,4,'Neafectat');
+insert into afectiune_pacient values
+(2,5,'Severitate mica');
+insert into afectiune_pacient values
+(5,5,'Neafectat');
+
+drop sequence id;
+create sequence id
+start with 1
+increment by 1
+minvalue 0
+maxvalue 1000
+nocycle;
+
+insert into istoric values
+(id.nextval, 1, to_date('14/07/2016', 'DD/MM/YYYY'), 'Vindecat');
+insert into istoric values
+(id.nextval, 2, to_date('13/04/2012', 'DD/MM/YYYY'), 'Vindecat');
+insert into istoric values
+(id.nextval, 3, to_date('24/02/2010', 'DD/MM/YYYY'), 'Ramas sub observatie');
+insert into istoric values
+(id.nextval, 1, to_date('14/03/2019', 'DD/MM/YYYY'), 'Ramas sub observatie');
+insert into istoric values
+(id.nextval, 5, to_date('31/12/2008', 'DD/MM/YYYY'), 'Vindecat');
+
+drop sequence id;
+create sequence id
+start with 1
+increment by 1
+minvalue 0
+maxvalue 1000
+nocycle;
+
+insert into programare values
+(id.nextval, 1, to_date('30/07/2021', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 2, to_date('24/05/2021', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 3, to_date('12/03/2021', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 4, to_date('20/10/2021', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 5, to_date('01/02/2020', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 1, to_date('11/12/2020', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 2, to_date('21/02/2019', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 3, to_date('04/05/2007', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 4, to_date('11/01/2018', 'DD/MM/YYYY'));
+insert into programare values
+(id.nextval, 5, to_date('02/02/2020', 'DD/MM/YYYY'));
+
+insert into angajat values
+(1, 'Popescu', 'Ion', 5600);
+insert into angajat values
+(2, 'Moromete', 'Vasile', 2300);
+insert into angajat values
+(3, 'Amariutei', 'Cezar', 6500);
+insert into angajat values
+(4, 'Cimpoca', 'Carmen', 2000);
+insert into angajat values
+(5, 'Minea', 'Alexandru', 7200);
+insert into angajat values
+(6, 'Petre', 'Camelia', 5500);
+insert into angajat values
+(7, 'Popica', 'Cristian', 6000);
+insert into angajat values
+(8, 'Cicarlita', 'Adrian', 2300);
+insert into angajat values
+(9, 'Pripita', 'Sebastian', 2000);
+insert into angajat values
+(10, 'Petcu', 'Florin', 2500);
+insert into angajat values
+(11, 'Petcu', 'Ramona', 3500);
+insert into angajat values
+(12, 'Florescu', 'Camelia', 3750);
+insert into angajat values
+(13, 'Morosanu', 'Lucian', 4000);
+insert into angajat values
+(14, 'Curlea', 'Ciprian', 3800);
+insert into angajat values
+(15, 'Nedelcu', 'Cosmin', 3500);
+
+insert into doctor values
+(1, 1, to_date('19/11/2001', 'DD/MM/YYYY'), 'Oftalmolog');
+insert into doctor values
+(2, 3, to_date('23/09/1992', 'DD/MM/YYYY'), 'Chirurg');
+insert into doctor values
+(3, 5, to_date('12/10/200', 'DD/MM/YYYY'), 'Generalist');
+insert into doctor values
+(4, 6, to_date('19/12/1980', 'DD/MM/YYYY'), 'Balneofiziokinetoterapeut');
+insert into doctor values
+(5, 7, to_date('01/01/1997', 'DD/MM/YYYY'), 'Pneumolog');
+
+insert into asistent values
+(1, 1, 11, to_date('14/07/1999', 'DD/MM/YYYY'));
+insert into asistent values
+(2, 2, 12, to_date('13/02/1980', 'DD/MM/YYYY'));
+insert into asistent values
+(3, 3, 13, to_date('09/01/2007', 'DD/MM/YYYY'));
+insert into asistent values
+(4, 4, 14, to_date('02/12/2003', 'DD/MM/YYYY'));
+insert into asistent values
+(5, 5, 15, to_date('14/10/2020', 'DD/MM/YYYY'));
+
+insert into infirmier values
+(1, 1, 2, 'Scoala post-liceala');
+insert into infirmier values
+(2, 2, 4, 'Liceu');
+insert into infirmier values
+(3, 3, 8, 'Scoala post-liceala');
+insert into infirmier values
+(4, 4, 9, 'Liceu');
+insert into infirmier values
+(5, 5, 10, 'Scoala post-liceala');
+
+insert into casa_asig values
+(1, to_date('03/04/2020', 'DD/MM/YYYY'));
+insert into casa_asig values
+(2, to_date('13/04/2021', 'DD/MM/YYYY'));
+insert into casa_asig values
+(3, to_date('21/04/2019', 'DD/MM/YYYY'));
+insert into casa_asig values
+(4, to_date('19/04/2018', 'DD/MM/YYYY'));
+insert into casa_asig values
+(5, to_date('15/04/2017', 'DD/MM/YYYY'));
+
+insert into decontare values
+(1,1,'DA');
+insert into decontare values
+(2,1,'NU');
+insert into decontare values
+(3,3,'DA');
+insert into decontare values
+(4,4,'NU');
+insert into decontare values
+(5, 2, 'DA');
+
+insert into tratament values
+(1, 1, 4, 4, 1, 1, 20);
+insert into tratament values
+(2, 1, 4, 4, 3, 4, 10);
+insert into tratament values
+(3, 2, 1, 1, 4, 3, 24);
+insert into tratament values
+(4, 4, 2, 2, 5, 2, 10);
+insert into tratament values
+(5, 3, 5, 5, 3, 5, 14);
+
+insert into consultatie values
+(4, 1, 1, 'Pacientul are tibia fracturata');
+insert into consultatie values
+(2, 2, 2, 'Pacientul are apendicita');
+insert into consultatie values
+(4,3,3,'Pacientul are femurul rupt');
+insert into consultatie values
+(1,4,4,'Pacientul are ochii uscati');
+insert into consultatie values
+(2,5,5,'Pacientul sufera de apendicita');
+insert into consultatie values
+(3,6,1,'Pacientul sufera de o raceala comuna');
+insert into consultatie values
+(1,7,5,'Pacientul are ochii uscati');
+insert into consultatie values
+(3,8,5,'Pacientul sufera de o raceala comuna');
+insert into consultatie values
+(5,9,3,'Pacientul sufera de Covid-19');
+insert into consultatie values
+(5,10,4,'Pacientul sufera de Covid-19');
+
+insert into cladire values
+(1,2,6);
+insert into cladire values
+(2,3,9);
+insert into cladire values
+(3,4,12);
+insert into cladire values
+(4,1,3);
+insert into cladire values
+(5,1,5);
+
+insert into cabinet values
+(1,1,1,'Spatios, modern',60);
+insert into cabinet values
+(2,2,2,'Micut, modern',30);
+insert into cabinet values
+(3,3,3,'Foarte mare, invechit', 90);
+insert into cabinet values
+(4,4,4,'Proaspat renovat', 60);
+insert into cabinet values
+(5,5,5, 'De marime medie', 50);
+
+commit;

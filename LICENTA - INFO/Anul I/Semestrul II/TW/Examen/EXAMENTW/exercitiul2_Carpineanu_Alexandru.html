@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            .buton{
+                border: dotted black 3px;
+                background-color: red;
+            }
+            body{
+                width: 1000px;
+                height: 1000px;
+            }
+        </style>
+
+        <script>
+            
+            window.onload = function(){
+
+                var index = 0;
+                document.body.onclick=function(event){
+                    index+=1;
+                    var buton = document.createElement("button");
+                    buton.className="buton";
+                    buton.id=index;
+                    var randomColor = Math.floor(Math.random()*16777215).toString(16);
+                    buton.style.backgroundColor ="#" + randomColor;
+                    buton.innerHTML="Buton nou";
+                    buton.style.position = "absolute";
+                    buton.style.left=event.clientX + "px";
+   	                buton.style.top=event.clientY + "px";
+                    document.body.appendChild(buton);
+
+                    buton.onclick=function(event){
+                        var culoare = buton.style.backgroundColor;
+                        document.body.style.backgroundColor=culoare;
+                        buton.innerHTML=buton.id;
+                        event.stopPropagation();
+                    }
+                }
+            }
+        
+        </script>
+    </head>
+
+    <body>
+        
+        
+    </body>
+
+</html>

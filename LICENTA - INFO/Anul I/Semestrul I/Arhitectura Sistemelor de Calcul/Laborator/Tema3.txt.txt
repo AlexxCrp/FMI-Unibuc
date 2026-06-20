@@ -1,0 +1,53 @@
+.data
+	str1:.asciiz "ANAAREMERE"
+	ch:.asciiz "E"
+	vocale:.asciiz "AEIOU"
+.text
+
+main:
+	
+	li $t0, 0
+	la $t7, ch
+
+for:
+	lb $t1, str1($t0)
+
+	beq $t1, $0 exit
+
+	beq $t1, $t7, verif
+
+	addi $t0, 1
+	j for
+
+verif:
+	
+	move $t2, $t0
+	addi $t2, 1
+	lb $t3, str1($t2)
+	li $t4, 0
+for1:
+	lb $t5, vocale($t4)
+	beq $t5, $0, ok
+	
+	beq $t5, $t3, exit
+
+	addi $t4, 1
+	j for1
+
+ok:
+	move $a0, $t0
+	li $v0, 1
+	syscall
+	
+	li $v0, 10
+	syscall
+
+exit:
+
+	li $a0, -1
+	li $v0 ,1
+	syscall
+	
+	li $v0, 10
+	syscall
+

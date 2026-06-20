@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    
+    <style>
+        body{
+            background-color: lightblue;
+        }
+    </style>
+
+    <script>
+        window.onload=function(){
+            if(localStorage.getItem("culoare"))
+                {
+                    document.body.style.backgroundColor="#"+localStorage.getItem("culoare");
+                }
+            var n=0;
+            var index=0;
+            var culoare = document.body.style.backgroundColor;
+            window.onkeydown = function(event) {
+                if(event.key>="a" && event.key<="z")
+                {
+                    n+=1;
+                    if(n==1)
+                    {
+                        t=setInterval(function(){
+                            index+=1;
+                            var randomColor = Math.floor(Math.random()*16777215).toString(16);
+                            if(index == 1)
+                            {
+                                localStorage.setItem("culoare",randomColor);
+                            }
+                            
+                            document.body.style.backgroundColor="#"+randomColor;
+                            var cb=document.getElementById("check");
+                            if(cb.checked)
+                            {
+                                clearInterval(t);
+                                document.body.style.backgroundColor=culoare;
+                            }
+                                
+                        },2000)
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <input type="checkbox" name="box" id="check">
+    <label for="box">CSS</label>
+
+</body>
+</html>

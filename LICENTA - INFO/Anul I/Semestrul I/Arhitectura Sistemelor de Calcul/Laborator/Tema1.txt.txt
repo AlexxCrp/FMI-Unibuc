@@ -1,0 +1,68 @@
+.data
+	str0: .asciiz "Suma celor doua numere este: "
+	str1: .asciiz "\nDiferenta celor doua numere este: "
+	str2: .asciiz "\nInmultirea celor doua numere este: "
+	str3: .asciiz "\nCatul impartirii primului numar la cel de-al doilea numar este: "
+	str4: .asciiz "\nRestul impartirii primului numar la cel de-al doilea numar este: "
+.text
+
+main:
+
+	li $v0, 5
+	syscall
+
+	move $t0, $v0
+
+	li $v0, 5
+	syscall
+
+	move $t1, $v0
+
+	add $t2, $t0, $t1
+	sub $t3, $t0, $t1
+	mul $t4, $t0, $t1
+	div $t5, $t0, $t1
+	rem $t6, $t0, $t1
+
+	la $a0, str0
+	li $v0, 4
+	syscall
+
+	move $a0, $t2
+	li $v0, 1
+	syscall
+
+	la $a0, str1
+	li $v0, 4
+	syscall
+
+	move $a0, $t3
+	li $v0, 1
+	syscall
+
+	la $a0, str2
+	li $v0, 4
+	syscall
+
+	move $a0, $t4
+	li $v0, 1
+	syscall
+
+	la $a0, str3
+	li $v0, 4
+	syscall
+
+	move $a0, $t5
+	li $v0, 1
+	syscall
+
+	la $a0, str4
+	li $v0, 4
+	syscall
+
+	move $a0, $t6
+	li $v0, 1
+	syscall
+
+	li $v0,10
+	syscall

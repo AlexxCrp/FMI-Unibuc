@@ -1,0 +1,137 @@
+--Carpineanu Alexandru
+--Gr. 131
+
+--exrcitiul 11
+
+--Cerere 1:
+--Sa se afiseze codurile cabinetelor doctorilor care au stabilit tratamante pacientilor cu 
+--prenumele "Alexandru" sau pacientilor care au cel putin 6 litere in numele de familie 
+
+select distinct c.cod_cabinet as "Cod cabinet"
+from cabinet c, doctor d, tratament t, pacient p
+where c.cod_doctor = d.cod_doctor
+and d.cod_doctor = t.cod_doctor
+and t.cod_pacient = p.cod_pacient
+and p.cod_pacient in (select p1.cod_pacient
+                        from pacient p1
+                        where lower(p1.prenume)='alexandru'
+                        or length(p1.nume) >= 6);
+          
+--Cerere 2:
+--Sa se afiseze asistentii care vor avea salariul marit si noile lor salarii, ordonati in ordine alfabetica a numelor
+--Salarile lor se vor mari conform umatoarelor reguli:
+--1) Daca sunt asistenti de oftalmolog cu 10%(au cod 1), daca sunt asistenti de chirurg/generalist (au cod 2/3)
+--cu 15% si cu 18% daca sunt asistenti de balneofiziokinetoterapeut si pneumolog(au cod 4/5).
+--2) Pentru a fi eligibili pentru marire, acestia trebuie sa: 1)aiba cel putin 10 ani de experienta
+--2)Sa aiba cel putin un infirmier sub comanda lor.
+--Daca un asistent inca este intern si nu are salariu(salariu = null), spitalul a decis sa le dea si lor
+-- un salariu de 2000 de lei
+
+with asistenti_eligibili as
+(select a.cod_asistent
+from asistent a
+where months_between((select sysdate from dual), a.data_term_studii) > 120
+and a. cod_asistent in (select cod_asistent
+                        from infirmier))
+select a.nume as "nume", a.prenume as "prenume",
+nvl(decode(a1.cod_asistent,
+        1, a.salariu*1.1,
+        2, a.salariu*1.15,
+        3, a.salariu*1.15,
+        4, a.salariu*1.18,
+        5, a.salariu*1.18,
+        salariu
+),2000) as "Salariu_nou"
+from angajat a, asistent a1
+where a.cod_angajat = a1.cod_angajat
+and a1.cod_asistent in (select * from asistenti_eligibili)
+order by nume asc;
+
+--cerere 3:
+--Spitalul a decis sa mareasca salariul doctorilor care au facut cele mai multe consultatii.
+--Sa se afiseze Numele, prenumele si noul salariu al doctorilor norocosi
+--Salariul lor va fi marit in functie de specializarea lor astfel:
+-- oftalmolog: 5%(cod=1), chirurg 10%(cod=2), generalist 8%(cod=3), balneofiziokinetoterapeut 15%(cod=4), 
+--Pneumolog 12%(cod=5)
+
+with nr_consultatii as
+(select c.cod_doctor, count(c.diagnostic) numar
+from consultatie c
+Group by c.cod_doctor),
+doctori_norocosi as
+(select n.cod_doctor
+from nr_consultatii n
+where n.numar = (select max(numar)
+                from nr_consultatii))     
+select a.nume as "nume", a.prenume as "prenume",
+case d.cod_doctor
+        when 1 then a.salariu*1.05
+        when 2 then a.salariu*1.1
+        when 3 then a.salariu*1.08
+        when 4 then a.salariu*1.15
+        when 5 then a.salariu*1.12
+        else a.salariu
+        end as "Salariu_nou"
+from angajat a, doctor d
+where a.cod_angajat = d.cod_angajat
+and d.cod_doctor in (select * from doctori_norocosi);
+
+--cerere 4
+--Afisati diagnosticele stabilite in cabinetele care se afla incladiri cu un numar de etaje mai mare
+-- sau egal cu numarul de doctori care lucreaza in cabinete din acea cladire
+select distinct c.diagnostic
+from consultatie c, cabinet cab
+where c.cod_doctor = cab.cod_doctor
+and cab.cod_cladire in (select c.cod_cladire
+                        from cladire c
+                        where c.nr_etaje >= (select count(d.cod_doctor)
+                                            from doctor d, cabinet cab1
+                                            where d.cod_doctor = cab1.cod_doctor
+                                            and cab1.cod_cladire = c.cod_cladire));
+                                            
+--cerere 5
+--Afisati asistentii(nume+prenume) care au aplicat cele mai multe tratamente decontate
+select a.nume, a.prenume
+from angajat a, asistent a1, tratament t
+where a.cod_angajat = a1.cod_angajat
+and a1.cod_asistent = t.cod_asistent
+and t.cod_tratament in (select cod
+                        from (select t1.cod_tratament cod, count(t1.cod_tratament)
+                                from tratament t1, decontare d
+                                where t1.cod_decontare = d.cod_decontare
+                                and lower(d.da_nu) = 'da'
+                                group by t1.cod_tratament));
+                               
+--exercitiul 12
+--1 Modificam starea decontarii daca casa de asigurari a dat bugetul inainte de 2020
+update decontare
+set da_nu = 'nu'
+where cod_casa_asig in (select c.cod_casa_asig
+                        from casa_asig c, decontare d
+                        where c.data_alocare_buget <= to_date('01/01/2020', 'DD/MM/YYYY')
+                        and d.cod_casa_asig = c.cod_casa_asig);
+
+--2 Stergem infirmierii care au asistenti care au tratat pacienti cu covid
+delete from infirmier
+where cod_in in (select i.cod_in
+                    from infirmier i, asistent a, tratament t, afectiune a
+                    where i.cod_asistent=a.cod_asistent
+                    and a.cod_asistent=t.cod_asistent
+                    and t.cod_afectiune=a.cod_afectiune
+                    and lower(a.denumire) like '%covid%' );
+
+--3 Scadem salariul asistentilor
+update angajat
+set salariu = salariu*0.9
+where cod_angajat in (select cod_angajat
+                        from asistent);
+
+--ex 13
+--create sequence id
+--start with 1
+--increment by 1                        Secventa se gaseste in fisierul de creare, si este rulata acolo
+--minvalue 0
+--maxvalue 1000
+--nocycle;
+
+rollback;

@@ -1,0 +1,90 @@
+#Sa se determine minimul si numarul lui de aparitii dintr-un tablou unidimensional de intregi. Array-ul va fi citit de la tastatura.
+
+.data
+	v: .space 400
+	txt: .asciiz "Minimul este:"
+	endl: .asciiz "\n"
+	nr_ap: .asciiz "Numar de aparitii:"
+.text
+
+main:
+	
+	li $v0, 5
+	syscall
+	move $t0, $v0
+
+	li $t1, 0
+	li $t2, 0
+
+	li $v0, 5
+	syscall
+
+	sw $v0, v($t2)
+	lw $t3, v($t2)
+
+	addi $t1, $t1, 1
+	addi $t2, $t2, 4
+
+for:
+	bge $t1, $t0, reinitializare
+	
+	li $v0, 5
+	syscall
+	
+	sw $v0, v($t2)
+	lw $t5, v($t2)
+	
+	blt $t5, $t3, sch_min
+cont:
+	addi $t1, $t1, 1
+	addi $t2, $t2, 4
+	j for
+
+sch_min:
+	lw $t3, v($t2)
+	j cont
+
+reinitializare:
+	li $t1, 0
+	li $t2, 0
+	li $t4, 0
+for2:
+	bge $t1, $t0, afisare
+	lw $t5, v($t2)
+	beq $t5, $t3, incr	
+cont2:
+	addi $t1, $t1, 1
+	addi $t2, $t2, 4
+	j for2
+
+incr:
+	addi $t4, $t4, 1
+	j cont2
+
+afisare:
+	
+	la $a0, txt
+	li $v0, 4
+	syscall
+
+	move $a0, $t3
+	li $v0, 1
+	syscall
+
+	la $a0, endl
+	li $v0, 4
+	syscall
+
+	la $a0, nr_ap
+	li $v0, 4
+	syscall
+
+	move $a0, $t4
+	li $v0, 1
+	syscall
+
+exit:
+	li $v0, 10
+	syscall
+
+	
